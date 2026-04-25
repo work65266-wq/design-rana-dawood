@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rana Dawood — Luxury Clothing</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #8a6f32;
+    --black: #080808;
+    --dark: #111111;
+    --dark2: #1a1a1a;
+    --white: #f5f0e8;
+    --gray: #888;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.6;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 60px;
+    transition: background 0.4s ease, padding 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(8,8,8,0.95);
+    backdrop-filter: blur(12px);
+    padding: 18px 60px;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-logo span { font-style: italic; color: var(--white); }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-right { display: flex; align-items: center; gap: 24px; }
+  .cart-btn {
+    position: relative;
+    background: none; border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 10px 20px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.3s ease;
+  }
+  .cart-btn:hover { background: var(--gold); color: var(--black); }
+  .cart-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--gold); color: var(--black);
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    font-size: 9px; font-weight: 400;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 20%, rgba(201,168,76,0.05) 0%, transparent 50%);
+  }
+  .hero-lines {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg, rgba(201,168,76,0.03) 0px, rgba(201,168,76,0.03) 1px, transparent 1px, transparent 120px
+    );
+  }
+  canvas#heroCanvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0.4;
+  }
+  .hero-content {
+    text-align: center;
+    z-index: 2;
+    animation: fadeUp 1.2s ease forwards;
+    opacity: 0;
+    animation-delay: 0.3s;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(60px, 10vw, 130px);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+    display: block;
+  }
+  .hero-subtitle {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin: 28px 0 48px;
+  }
+  .hero-cta {
+    display: inline-flex; gap: 16px; align-items: center;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--black);
+    padding: 16px 40px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    border: none; cursor: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-ghost {
+    color: var(--white);
+    padding: 16px 40px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    border: 1px solid rgba(245,240,232,0.3);
+    background: none; cursor: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  .hero-scroll {
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    opacity: 0.4;
+    animation: fadeUp 1s ease forwards 1.5s;
+    opacity: 0;
+  }
+  .hero-scroll span {
+    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollDown 2s ease infinite;
+  }
+  @keyframes scrollDown {
+    0%   { transform: scaleY(0); transform-origin: top; }
+    50%  { transform: scaleY(1); transform-origin: top; }
+    51%  { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* MARQUEE */
+  .marquee-section {
+    border-top: 1px solid rgba(201,168,76,0.2);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    padding: 18px 0;
+    overflow: hidden;
+    background: rgba(201,168,76,0.03);
+  }
+  .marquee-track {
+    display: flex; gap: 60px;
+    animation: marquee 20s linear infinite;
+    width: max-content;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .marquee-item {
+    font-size: 10px; letter-spacing: 5px;
+    text-transform: uppercase; color: var(--gold);
+    opacity: 0.7; white-space: nowrap;
+    display: flex; align-items: center; gap: 60px;
+  }
+  .marquee-item::after {
+    content: '◆';
+    font-size: 6px;
+    opacity: 0.5;
+  }
+
+  /* SECTION COMMON */
+  section { padding: 120px 60px; }
+  .section-label {
+    font-size: 9px; letter-spacing: 6px;
+    text-transform: uppercase; color: var(--gold);
+    opacity: 0.7; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-label::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--gold); opacity: 0.5;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1.1;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  /* FEATURED */
+  .featured { background: var(--dark); }
+  .featured-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-end; margin-bottom: 60px;
+  }
+  .view-all {
+    font-size: 10px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold);
+    text-decoration: none; opacity: 0.7;
+    transition: opacity 0.3s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .view-all:hover { opacity: 1; }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .product-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--dark2);
+    cursor: none;
+  }
+  .product-card:first-child {
+    grid-row: span 2;
+  }
+  .product-img {
+    width: 100%; aspect-ratio: 3/4;
+    background: var(--dark2);
+    overflow: hidden;
+    position: relative;
+  }
+  .product-card:first-child .product-img {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+  .product-img-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.7s ease;
+    position: relative;
+  }
+  .product-card:hover .product-img-inner { transform: scale(1.05); }
+
+  /* Fabric texture placeholder */
+  .fabric-placeholder {
+    width: 100%; height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .fp-1 { background: linear-gradient(135deg, #1c1510 0%, #2a1f12 30%, #1a1208 60%, #251a0f 100%); }
+  .fp-2 { background: linear-gradient(135deg, #0d1520 0%, #111c28 40%, #0a1218 100%); }
+  .fp-3 { background: linear-gradient(135deg, #1a1212 0%, #221616 50%, #180f0f 100%); }
+  .fp-4 { background: linear-gradient(135deg, #121a12 0%, #161e14 50%, #0f1810 100%); }
+  .fabric-pattern {
+    position: absolute; inset: 0;
+    opacity: 0.15;
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(201,168,76,0.3) 0px, rgba(201,168,76,0.3) 1px,
+      transparent 1px, transparent 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(201,168,76,0.15) 0px, rgba(201,168,76,0.15) 1px,
+      transparent 1px, transparent 20px
+    );
+  }
+  .fabric-icon {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+  }
+  .fabric-icon svg { opacity: 0.2; }
+  .fabric-tag {
+    font-size: 9px; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--gold);
+    opacity: 0.4;
+  }
+
+  .product-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.9) 0%, transparent 50%);
+    opacity: 0; transition: opacity 0.4s ease;
+    display: flex; align-items: flex-end; padding: 28px;
+  }
+  .product-card:hover .product-overlay { opacity: 1; }
+  .overlay-btn {
+    background: var(--gold); color: var(--black);
+    padding: 12px 24px;
+    font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; border: none; cursor: none;
+    font-family: 'Josefin Sans', sans-serif;
+    transform: translateY(10px);
+    transition: transform 0.4s ease 0.1s;
+    width: 100%;
+  }
+  .product-card:hover .overlay-btn { transform: translateY(0); }
+  .product-info {
+    padding: 20px 0 4px;
+  }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 300;
+    margin-bottom: 6px;
+  }
+  .product-meta {
+    display: flex; justify-content: space-between;
+    align-items: center;
+  }
+  .product-category {
+    font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; opacity: 0.4;
+  }
+  .product-price {
+    font-size: 13px; color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  /* STORY */
+  .story {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 100px; align-items: center;
+    padding: 120px 60px;
+  }
+  .story-visual {
+    position: relative; height: 600px;
+  }
+  .story-img-main {
+    width: 75%; height: 480px;
+    background: linear-gradient(135deg, #1a1208, #2a1c0e);
+    position: relative; overflow: hidden;
+  }
+  .story-img-accent {
+    width: 55%; height: 260px;
+    background: linear-gradient(135deg, #0d1520, #162030);
+    position: absolute; bottom: 0; right: 0;
+    border: 3px solid var(--black);
+    overflow: hidden;
+  }
+  .story-gold-line {
+    position: absolute; left: -20px; top: 60px;
+    width: 3px; height: 180px;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+  .story-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 140px; font-weight: 300;
+    position: absolute; top: -30px; left: -20px;
+    color: var(--gold); opacity: 0.06;
+    line-height: 1; z-index: -1;
+    pointer-events: none;
+  }
+  .story-text p {
+    font-size: 15px; line-height: 1.9;
+    opacity: 0.65; margin-bottom: 20px;
+  }
+  .story-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-top: 48px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    padding-top: 40px;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px; font-weight: 300;
+    color: var(--gold); line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; opacity: 0.4;
+  }
+
+  /* CATEGORIES */
+  .categories { background: var(--dark); }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 2px; margin-top: 60px;
+  }
+  .cat-card {
+    position: relative; overflow: hidden;
+    height: 320px; cursor: none;
+  }
+  .cat-card:first-child { grid-row: span 2; height: auto; }
+  .cat-bg {
+    width: 100%; height: 100%;
+    transition: transform 0.6s ease;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .cat-card:hover .cat-bg { transform: scale(1.04); }
+  .cat-c1 { background: linear-gradient(135deg, #1c1208 0%, #2e1f0a 100%); }
+  .cat-c2 { background: linear-gradient(135deg, #0a1225 0%, #0f1e3a 100%); }
+  .cat-c3 { background: linear-gradient(135deg, #1a0a0a 0%, #2e1010 100%); }
+  .cat-c4 { background: linear-gradient(135deg, #0a1a0a 0%, #122012 100%); }
+  .cat-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.2) 60%, transparent 100%);
+  }
+  .cat-label {
+    position: absolute; bottom: 28px; left: 28px; right: 28px;
+  }
+  .cat-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 300;
+    margin-bottom: 6px;
+  }
+  .cat-count {
+    font-size: 9px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold); opacity: 0.7;
+  }
+  .cat-pattern {
+    position: absolute; inset: 0; opacity: 0.08;
+    background-image: radial-gradient(circle, rgba(201,168,76,0.4) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  /* PROCESS */
+  .process { text-align: center; }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; margin-top: 80px;
+    position: relative;
+  }
+  .process-step {
+    padding: 50px 30px;
+    background: var(--dark2);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .process-step:hover { background: #1f1f1f; }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px; font-weight: 300;
+    color: var(--gold); opacity: 0.15;
+    line-height: 1; margin-bottom: 20px;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; margin-bottom: 14px;
+  }
+  .step-desc {
+    font-size: 12px; opacity: 0.5; line-height: 1.8; letter-spacing: 0.5px;
+  }
+  .step-line {
+    position: absolute; top: 50%; right: -1px;
+    width: 2px; height: 60px;
+    background: var(--gold); opacity: 0.2;
+    transform: translateY(-50%);
+  }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--dark); overflow: hidden; }
+  .testimonials-inner {
+    display: flex; gap: 2px;
+    margin-top: 60px;
+  }
+  .testi-card {
+    flex: 0 0 calc(33.33% - 2px);
+    background: var(--dark2);
+    padding: 48px 40px;
+    position: relative;
+    transition: transform 0.3s;
+  }
+  .testi-card:hover { transform: translateY(-4px); }
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px; line-height: 0.5;
+    color: var(--gold); opacity: 0.2;
+    margin-bottom: 24px;
+  }
+  .testi-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-style: italic;
+    line-height: 1.7; opacity: 0.8;
+    margin-bottom: 32px;
+  }
+  .testi-author {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .testi-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; color: var(--black);
+  }
+  .testi-name {
+    font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .testi-location { font-size: 10px; opacity: 0.4; letter-spacing: 1px; }
+  .testi-stars { color: var(--gold); font-size: 12px; margin-bottom: 20px; }
+
+  /* CTA BANNER */
+  .cta-banner {
+    padding: 100px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1208 50%, #0d0d0d 100%);
+  }
+  .cta-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.12) 0%, transparent 70%);
+  }
+  .cta-banner-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 300; line-height: 1.1;
+    margin-bottom: 24px; position: relative;
+  }
+  .cta-banner-sub {
+    font-size: 12px; letter-spacing: 3px;
+    text-transform: uppercase; opacity: 0.5;
+    margin-bottom: 48px; position: relative;
+  }
+  .cta-actions { display: flex; justify-content: center; gap: 16px; position: relative; }
+
+  /* FOOTER */
+  footer {
+    background: #050505;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding: 80px 60px 40px;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 300;
+    color: var(--gold); letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .footer-brand-desc {
+    font-size: 12px; opacity: 0.45; line-height: 1.9;
+    max-width: 280px;
+  }
+  .footer-social {
+    display: flex; gap: 14px; margin-top: 28px;
+  }
+  .social-icon {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(201,168,76,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--gold); opacity: 0.6;
+    cursor: none; transition: all 0.3s;
+    text-decoration: none;
+  }
+  .social-icon:hover { opacity: 1; border-color: var(--gold); background: rgba(201,168,76,0.1); }
+  .footer-col h4 {
+    font-size: 9px; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 24px; opacity: 0.7;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li {
+    margin-bottom: 12px;
+  }
+  .footer-col ul li a {
+    color: var(--white); text-decoration: none;
+    font-size: 12px; opacity: 0.45;
+    transition: opacity 0.3s, color 0.3s;
+    letter-spacing: 0.5px;
+  }
+  .footer-col ul li a:hover { opacity: 0.9; color: var(--gold); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy {
+    font-size: 10px; opacity: 0.3; letter-spacing: 1px;
+  }
+  .footer-gold-line {
+    width: 60px; height: 1px; background: var(--gold); opacity: 0.3;
+  }
+
+  /* ANIMATIONS */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .hero-title { font-size: clamp(48px, 14vw, 80px); }
+    .products-grid { grid-template-columns: 1fr 1fr; }
+    .product-card:first-child { grid-row: span 1; }
+    .story { grid-template-columns: 1fr; gap: 60px; padding: 80px 24px; }
+    .story-visual { height: 400px; }
+    .cat-grid { grid-template-columns: 1fr 1fr; }
+    .cat-card:first-child { grid-row: span 1; height: 320px; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .testimonials-inner { flex-direction: column; }
+    .testi-card { flex: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Rana <span>Dawood</span></a>
+  <ul class="nav-links">
+    <li><a href="#products">Collection</a></li>
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn">
+      Cart
+      <span class="cart-badge">3</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Est. Lahore — Premium Craftsmanship</p>
+    <h1 class="hero-title">
+      Rana<br>
+      <em>Dawood</em>
+    </h1>
+    <p class="hero-subtitle">Where Tradition Meets Luxury</p>
+    <div class="hero-cta">
+      <a href="#products" class="btn-primary">Explore Collection</a>
+      <a href="#story" class="btn-ghost">Our Story</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">Premium Fabric</div>
+    <div class="marquee-item">Hand Crafted</div>
+    <div class="marquee-item">Luxury Stitching</div>
+    <div class="marquee-item">Bespoke Designs</div>
+    <div class="marquee-item">Lahore Heritage</div>
+    <div class="marquee-item">Premium Fabric</div>
+    <div class="marquee-item">Hand Crafted</div>
+    <div class="marquee-item">Luxury Stitching</div>
+    <div class="marquee-item">Bespoke Designs</div>
+    <div class="marquee-item">Lahore Heritage</div>
+    <div class="marquee-item">Premium Fabric</div>
+    <div class="marquee-item">Hand Crafted</div>
+    <div class="marquee-item">Luxury Stitching</div>
+    <div class="marquee-item">Bespoke Designs</div>
+    <div class="marquee-item">Lahore Heritage</div>
+  </div>
+</div>
+
+<!-- FEATURED PRODUCTS -->
+<section class="featured" id="products">
+  <div class="featured-header">
+    <div>
+      <div class="section-label reveal">New Arrivals</div>
+      <h2 class="section-title reveal reveal-delay-1">Featured <em>Collection</em></h2>
+    </div>
+    <a href="#" class="view-all reveal">View All →</a>
+  </div>
+  <div class="products-grid reveal">
+
+    <div class="product-card">
+      <div class="product-img">
+        <div class="product-img-inner">
+          <div class="fabric-placeholder fp-1" style="width:100%;height:100%;">
+            <div class="fabric-pattern"></div>
+            <div class="fabric-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <path d="M12 8L24 4L36 8V20C36 30 24 40 24 40C24 40 12 30 12 20V8Z" stroke="#c9a84c" stroke-width="1.5" fill="none"/>
+                <path d="M18 16L24 12L30 16V22C30 27 24 32 24 32C24 32 18 27 18 22V16Z" stroke="#c9a84c" stroke-width="1" fill="none" opacity="0.5"/>
+              </svg>
+              <span class="fabric-tag">Sherwani</span>
+            </div>
+          </div>
+        </div>
+        <div class="product-overlay">
+          <button class="overlay-btn">Quick View</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Royal Sherwani — Midnight</div>
+        <div class="product-meta">
+          <span class="product-category">Formal Wear</span>
+          <span class="product-price">PKR 28,000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <div class="product-img-inner">
+          <div class="fabric-placeholder fp-2" style="width:100%;height:100%;">
+            <div class="fabric-pattern"></div>
+            <div class="fabric-icon">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <rect x="8" y="6" width="24" height="30" rx="2" stroke="#c9a84c" stroke-width="1.5" fill="none"/>
+                <path d="M8 14H32" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+                <path d="M14 6V36" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+                <path d="M20 6V36" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+                <path d="M26 6V36" stroke="#c9a84c" stroke-width="0.8" opacity="0.3"/>
+              </svg>
+              <span class="fabric-tag">Shalwar Kameez</span>
+            </div>
+          </div>
+        </div>
+        <div class="product-overlay">
+          <button class="overlay-btn">Quick View</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Classic Linen Suit</div>
+        <div class="product-meta">
+          <span class="product-category">Casual</span>
+          <span class="product-price">PKR 12,500</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <div class="product-img-inner">
+          <div class="fabric-placeholder fp-3" style="width:100%;height:100%;">
+            <div class="fabric-pattern"></div>
+            <div class="fabric-icon">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <path d="M10 10L20 6L30 10L32 28L20 34L8 28L10 10Z" stroke="#c9a84c" stroke-width="1.5" fill="none"/>
+                <circle cx="20" cy="18" r="5" stroke="#c9a84c" stroke-width="1" fill="none" opacity="0.5"/>
+              </svg>
+              <span class="fabric-tag">Waistcoat</span>
+            </div>
+          </div>
+        </div>
+        <div class="product-overlay">
+          <button class="overlay-btn">Quick View</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Velvet Waistcoat</div>
+        <div class="product-meta">
+          <span class="product-category">Semi-Formal</span>
+          <span class="product-price">PKR 8,500</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">
+        <div class="product-img-inner">
+          <div class="fabric-placeholder fp-4" style="width:100%;height:100%;">
+            <div class="fabric-pattern"></div>
+            <div class="fabric-icon">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <path d="M8 12C8 12 14 8 20 8C26 8 32 12 32 12V32C32 32 26 34 20 34C14 34 8 32 8 32V12Z" stroke="#c9a84c" stroke-width="1.5" fill="none"/>
+                <path d="M20 8V34" stroke="#c9a84c" stroke-width="0.8" opacity="0.4"/>
+                <path d="M8 20H32" stroke="#c9a84c" stroke-width="0.8" opacity="0.4"/>
+              </svg>
+              <span class="fabric-tag">Kurta</span>
+            </div>
+          </div>
+        </div>
+        <div class="product-overlay">
+          <button class="overlay-btn">Quick View</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Embroidered Kurta</div>
+        <div class="product-meta">
+          <span class="product-category">Eid Special</span>
+          <span class="product-price">PKR 9,800</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STORY -->
+<div class="story" id="story">
+  <div class="story-visual reveal">
+    <div class="story-number">20</div>
+    <div class="story-img-main">
+      <div class="fabric-pattern" style="opacity:0.1;"></div>
+      <div class="fabric-icon" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" opacity="0.15">
+          <path d="M20 20L40 10L60 20V50C60 65 40 75 40 75C40 75 20 65 20 50V20Z" stroke="#c9a84c" stroke-width="2" fill="none"/>
+          <path d="M30 32L40 25L50 32V44C50 52 40 58 40 58C40 58 30 52 30 44V32Z" stroke="#c9a84c" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+    </div>
+    <div class="story-img-accent">
+      <div class="fabric-pattern" style="opacity:0.12;"></div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;">
+        <p style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;opacity:0.5;text-align:center;line-height:1.8;">"Crafting elegance, one thread at a time"</p>
+      </div>
+    </div>
+    <div class="story-gold-line"></div>
+  </div>
+  <div class="story-text">
+    <div class="section-label reveal">Our Heritage</div>
+    <h2 class="section-title reveal reveal-delay-1">A Legacy of <em>Craft & Elegance</em></h2>
+    <div style="width:60px;height:1px;background:var(--gold);margin:28px 0;opacity:0.4;"></div>
+    <p class="reveal reveal-delay-2">Rana Dawood Clothing began as a humble stitching workshop in Lahore — built on the belief that every man deserves to wear something that feels genuinely his own.</p>
+    <p class="reveal reveal-delay-3">Two decades later, we remain committed to that same philosophy: premium fabric, masterful craftsmanship, and designs that honor both tradition and the modern man.</p>
+    <div class="story-stats reveal">
+      <div>
+        <div class="stat-num">20+</div>
+        <div class="stat-label">Years of Craft</div>
+      </div>
+      <div>
+        <div class="stat-num">5K+</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+      <div>
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Handcrafted</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+  <div class="section-label reveal">Browse By</div>
+  <h2 class="section-title reveal reveal-delay-1">Shop <em>Categories</em></h2>
+  <div class="cat-grid reveal">
+    <div class="cat-card">
+      <div class="cat-bg cat-c1" style="height:100%;">
+        <div class="cat-pattern"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0.07;">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+            <path d="M30 30L60 15L90 30V75C90 97 60 112 60 112C60 112 30 97 30 75V30Z" stroke="#c9a84c" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="cat-overlay"></div>
+      <div class="cat-label">
+        <div class="cat-name">Formal Wear</div>
+        <div class="cat-count">24 Pieces</div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-bg cat-c2" style="height:100%;">
+        <div class="cat-pattern"></div>
+      </div>
+      <div class="cat-overlay"></div>
+      <div class="cat-label">
+        <div class="cat-name">Casual</div>
+        <div class="cat-count">18 Pieces</div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-bg cat-c3" style="height:100%;">
+        <div class="cat-pattern"></div>
+      </div>
+      <div class="cat-overlay"></div>
+      <div class="cat-label">
+        <div class="cat-name">Eid Special</div>
+        <div class="cat-count">16 Pieces</div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-bg cat-c4" style="height:100%;">
+        <div class="cat-pattern"></div>
+      </div>
+      <div class="cat-overlay"></div>
+      <div class="cat-label">
+        <div class="cat-name">Accessories</div>
+        <div class="cat-count">12 Pieces</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="section-label reveal" style="justify-content:center;">How We Work</div>
+  <h2 class="section-title reveal reveal-delay-1">The <em>Rana Dawood</em> Process</h2>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="step-num">01</div>
+      <div class="step-title">Choose Your Style</div>
+      <div class="step-desc">Browse our curated collection or describe your vision. We'll help you find the perfect design.</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="process-step reveal reveal-delay-1">
+      <div class="step-num">02</div>
+      <div class="step-title">Select Fabric</div>
+      <div class="step-desc">Pick from our premium fabric range — imported linen, silk, and fine cotton blends.</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="process-step reveal reveal-delay-2">
+      <div class="step-num">03</div>
+      <div class="step-title">Master Tailoring</div>
+      <div class="step-desc">Our master tailors hand-craft every piece with precision, pride, and decades of expertise.</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="process-step reveal reveal-delay-3">
+      <div class="step-num">04</div>
+      <div class="step-title">Delivered to You</div>
+      <div class="step-desc">Your order is quality-checked and delivered across Pakistan — or ready for pickup in Lahore.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-label reveal">Client Love</div>
+  <h2 class="section-title reveal reveal-delay-1">What They <em>Say</em></h2>
+  <div class="testimonials-inner reveal">
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">Wore a Rana Dawood sherwani to my wedding — every single guest asked where I got it. The fabric quality and stitching is unmatched anywhere in Lahore.</div>
+      <div class="testi-author">
+        <div class="testi-avatar">A</div>
+        <div>
+          <div class="testi-name">Ahmed Raza</div>
+          <div class="testi-location">Lahore, Pakistan</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">I've been ordering my Eid suits from Rana Dawood for 5 years. The attention to detail — embroidery, fit, finishing — is always perfect. Truly luxury at its finest.</div>
+      <div class="testi-author">
+        <div class="testi-avatar">U</div>
+        <div>
+          <div class="testi-name">Usman Khan</div>
+          <div class="testi-location">Islamabad, Pakistan</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">Fast delivery, premium packaging, and the suit fit like it was custom-made. Because it was. Rana Dawood is in a completely different league.</div>
+      <div class="testi-author">
+        <div class="testi-avatar">F</div>
+        <div>
+          <div class="testi-name">Fahad Mirza</div>
+          <div class="testi-location">Karachi, Pakistan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner" id="contact">
+  <h2 class="cta-banner-title reveal">Ready to Wear <em style="font-style:italic;color:var(--gold);">Luxury?</em></h2>
+  <p class="cta-banner-sub reveal reveal-delay-1">Order now or visit our studio in Lahore</p>
+  <div class="cta-actions reveal reveal-delay-2">
+    <a href="#" class="btn-primary">Shop Collection</a>
+    <a href="https://wa.me/923001234567" class="btn-ghost">WhatsApp Us →</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">Rana Dawood</div>
+      <p class="footer-brand-desc">Premium clothing brand crafting luxury men's wear in Lahore since 2004. Every stitch, a statement.</p>
+      <div class="footer-social">
+        <a href="#" class="social-icon">f</a>
+        <a href="#" class="social-icon">in</a>
+        <a href="#" class="social-icon">tt</a>
+        <a href="#" class="social-icon">wa</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Collection</h4>
+      <ul>
+        <li><a href="#">Formal Wear</a></li>
+        <li><a href="#">Casual Wear</a></li>
+        <li><a href="#">Eid Special</a></li>
+        <li><a href="#">Accessories</a></li>
+        <li><a href="#">New Arrivals</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Information</h4>
+      <ul>
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Craftsmanship</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">Care Guide</a></li>
+        <li><a href="#">Returns Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">Lahore Studio</a></li>
+        <li><a href="#">WhatsApp</a></li>
+        <li><a href="#">Email Us</a></li>
+        <li><a href="#">Custom Orders</a></li>
+        <li><a href="#">Track Order</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-gold-line"></div>
+    <p class="footer-copy">© 2024 Rana Dawood Clothing. All rights reserved. — Lahore, Pakistan</p>
+    <div class="footer-gold-line"></div>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.querySelectorAll('a, button, .product-card, .cat-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+      ring.style.transform = 'translate(-50%,-50%) scale(1.5)';
+      ring.style.opacity = '1';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.opacity = '0.6';
+    });
+  });
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Hero canvas — particle field
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * 1920,
+      y: Math.random() * 1080,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.5 + 0.3,
+      a: Math.random() * 0.5 + 0.1
+    });
+  }
+
+  let mouseX = W / 2, mouseY = H / 2;
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+  function drawCanvas() {
+    ctx.clearRect(0, 0, W, H);
+
+    particles.forEach((p, i) => {
+      p.x += p.vx + (mouseX - W/2) * 0.00008;
+      p.y += p.vy + (mouseY - H/2) * 0.00008;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,168,76,${p.a})`;
+      ctx.fill();
+
+      // Connect nearby particles
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[j].x - p.x;
+        const dy = particles[j].y - p.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 140) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(201,168,76,${0.06 * (1 - dist/140)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    });
+
+    requestAnimationFrame(drawCanvas);
+  }
+  drawCanvas();
+
+  // Hero scroll animation
+  document.querySelector('.hero-scroll').style.opacity = '0.4';
+</script>
+</body>
+</html>
